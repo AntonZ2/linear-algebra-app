@@ -98,7 +98,7 @@ class Question:
         determ = np.linalg.det(self.MatrixQuestion)
         self.Question = "Find the inverse of the following matrix"
         self.SmallHint = "First you need to find the determinant of the original matrix."
-        self.BigHint = "The determinant of the original matrix is:"# + determ + " .Now you should find the matrix of minors. Then the matrix of cofactors of that and then times it by 1/determinant"
+        self.BigHint = "The determinant of the original matrix is:" + str(determ) + " .Now you should find the matrix of minors. Then the matrix of cofactors of that and then times it by 1/determinant"
 
     def matrixMultiplication(self):
         if self.QuestionDifficulty == 'h':
@@ -167,7 +167,7 @@ class Question:
         self.Answer = np.cross(self.MatrixQuestion[0].transpose(),self.MatrixQuestion[1].transpose())       #not working
         self.Question = "find the cross product of the following two vectors"
         self.SmallHint = ""
-        self.BigHint = ""
+        self.BigHint = None
         
 
     def matrixAddition(self):
@@ -181,7 +181,7 @@ class Question:
         self.Answer = np.add(self.MatrixQuestion[0],self.MatrixQuestion[1])
         self.Question = "Add the following to matrices"
         self.SmallHint = "Add each element in the same poistion to get the new value in that position"
-        self.BigHint = ""
+        self.BigHint = None
 
     
         
