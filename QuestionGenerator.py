@@ -6,7 +6,7 @@ import random
 #3:    Fill in the hints
 #4:    accessory functions to generate 1 matrix and for 2 matrices, (remove repeated code)
 #5:    add function that can upload the question to a txt file or to a database
-#6:    Finish eigenValues
+
 
 class Question:
     def __init__(self,difficulty,type):
@@ -66,27 +66,19 @@ class Question:
         return vector
 
 
-
-
     def generate_question(self):                    #just calls the appropritate question builder based on question type
         if self.type == 0:
             self.inverseMatrix()
-
         elif self.type == 1:
             self.matrixMultiplication()
-         
         elif self.type == 2:
             self.systemOfLinearEquations()
-        
         elif self.type == 3:
             self.eigenValues()
-            
         elif self.type == 4:
             self.matrixAddition()
-        
         elif self.type == 5:
             self.dotProduct()
-
         elif self.type == 6:
             self.crossProduct()
         return
@@ -193,11 +185,11 @@ class Question:
 
     
         
-            
+"""    for testing purposes
 question1 = Question('m',6)
 print(question1.Question)
 print(question1.MatrixQuestion)
 print(question1.SmallHint)
 print(question1.BigHint)
 print(question1.Answer)
-
+"""
