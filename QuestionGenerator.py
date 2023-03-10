@@ -148,7 +148,7 @@ class Question:
         
         self.Question = "Solve for the variables in the following system of system of linear equations"
         self.SmallHint = "Try convert the expressions into a 3x3 matrix and find the inverse."
-        self.BigHint  = "Turn the constants on the right into a 3x1 matrix, and multiply that by the inverse matrix from small hint, which is: " + str(np.round(np.linalg.inv(self.MatrixQuestion[0])),rounding + 2)
+        self.BigHint  = "Turn the constants on the right into a 3x1 matrix, and multiply that by the inverse matrix from small hint."
 
 
 
