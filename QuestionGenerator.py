@@ -1,23 +1,27 @@
+
 import numpy as np
 import random
 
-#1:    Make sure that inverse is rational, current check is not working
-#2:    Have some kind of rounding system 
-#3:    Fill in the hints
-#4:    accessory functions to generate 1 matrix and for 2 matrices, (remove repeated code)
-#5:    add function that can upload the question to a txt file or to a database
 
+rounding = 1
 
 class Question:
     def __init__(self,difficulty,type):
-        self.QuestionDifficulty = difficulty            #can randomise this as well
-        self.type = type                                #this is what kind of question this is (e.g. inverse matrix)
+        self.QuestionDifficulty = difficulty       
+        self.type = type                                
+        self.points = 0                                            #this is what kind of question this is (e.g. inverse matrix)
         self.Question = None
         self.MatrixQuestion = [[]]                  #will store the matrices (numpy  2D arrays) in a normal array
         self.SmallHint = None
         self.BigHint  = None
-        self.Answer  = []                           #will store the answers
+        self.Answer  = []      
+                             #will store the answers
         self.generate_question()
+        if self.QuestionDifficulty == 'm':
+            self.points = self.points *1.5
+        elif self.QuestionDifficulty == 'h':
+            self.points = self.points * 2
+        #leave easy as * 1 multiplier
 
 
     def generateBigDifficultMatrix(self):                        #generates a difficult 3x3 matrix, values 0-30 
@@ -66,21 +70,37 @@ class Question:
         return vector
 
 
+
+
     def generate_question(self):                    #just calls the appropritate question builder based on question type
         if self.type == 0:
-            self.inverseMatrix()
+            self.inverseMatrix()               
+            self.points = 40
+
         elif self.type == 1:
             self.matrixMultiplication()
+            self.points = 30
+         
         elif self.type == 2:
             self.systemOfLinearEquations()
+            self.points = 40
+        
         elif self.type == 3:
             self.eigenValues()
+            self.points = 30
+            
         elif self.type == 4:
             self.matrixAddition()
+            self.points = 10
+        
         elif self.type == 5:
             self.dotProduct()
+            self.points = 20
+
         elif self.type == 6:
             self.crossProduct()
+            self.points = 20
+        
         return
 
 
@@ -94,13 +114,14 @@ class Question:
             self.MatrixQuestion = self.generateEasyMatrix()
 
 
-        self.Answer = np.linalg.inv(self.MatrixQuestion)
+        self.Answer = np.round(np.linalg.inv(self.MatrixQuestion),rounding)
         determ = np.linalg.det(self.MatrixQuestion)
         self.Question = "Find the inverse of the following matrix"
         self.SmallHint = "First you need to find the determinant of the original matrix."
-        self.BigHint = "The determinant of the original matrix is:" + str(determ) + " .Now you should find the matrix of minors. Then the matrix of cofactors of that and then times it by 1/determinant"
+        self.BigHint = "The determinant of the original matrix is:" + str(round(determ,rounding + 3)) + " .Now you should find the matrix of minors. Then the matrix of cofactors of that and then times it by 1/determinant."
 
     def matrixMultiplication(self):
+
         if self.QuestionDifficulty == 'h':
             self.MatrixQuestion = [self.generateBigDifficultMatrix(),self.generateBigDifficultMatrix()]
         elif self.QuestionDifficulty == 'm':
@@ -108,11 +129,10 @@ class Question:
         elif self.QuestionDifficulty == 'e':
             self.MatrixQuestion = [self.generateEasyMatrix(),self.generateEasyMatrix()]
 
-        #self.Answer = np.matmul((self.MatrixQuestion[0]),(self.MatrixQuestion[1]))
+        self.Answer = np.round(np.matmul((self.MatrixQuestion[0]),(self.MatrixQuestion[1])),rounding)
         self.Question = "Find the product of these two matrices"
-        self.SmallHint = ""
-        self.BigHint = ""
-
+        self.SmallHint = "The element in the reuslt matrix is equal to the dot product of that element's row in the first matrix and the element's column in the second matrix."
+        self.BigHint = "To get you started the top left element is: " + str(self.MatrixQuestion[0][0]) + "which is the dot product of the first row in the first matrix, and the first column in the second matrix."
     
 
     def systemOfLinearEquations(self):
@@ -124,10 +144,12 @@ class Question:
         elif self.QuestionDifficulty == 'h':
             self.MatrixQuestion = [self.generateBigDifficultMatrix(),self.generateVector(3)]
         #the answer will be the vector x the inverse of the matrix
-        self.Answer = np.matmul(np.linalg.inv(self.MatrixQuestion[0]),self.MatrixQuestion[1])
+        self.Answer = np.round(np.matmul(np.linalg.inv(self.MatrixQuestion[0]),self.MatrixQuestion[1]),rounding)
+        
         self.Question = "Solve for the variables in the following system of system of linear equations"
-        self.SmallHint = "Try convert the expressions into a 3x3 matrix and find the inverse"
-        self.BigHint  = "Turn the constants on the right into a 3x1 matrix, and multiply that by the inverse matrix from small hint"
+        self.SmallHint = "Try convert the expressions into a 3x3 matrix and find the inverse."
+        self.BigHint  = "Turn the constants on the right into a 3x1 matrix, and multiply that by the inverse matrix from small hint."
+
 
 
     def eigenValues(self):       
@@ -138,12 +160,11 @@ class Question:
         elif self.QuestionDifficulty == 'e':
             self.MatrixQuestion = self.generateEasyMatrix()
 
-
-        self.Answer = np.linalg.eig(self.MatrixQuestion)
         determ = np.linalg.det(self.MatrixQuestion)
+        self.Answer = np.round(np.linalg.eigvals(self.MatrixQuestion),rounding) 
         self.Question = "Find the eigen values of the following matrix"
-        self.SmallHint = ""
-        self.BigHint = ""
+        self.SmallHint = "Remember that: Av = λv. (where λ is what we are solving for and A is our matrix). Note λ is a scalar quantity with multiple solutions."
+        self.BigHint = "Assuming v is non-zero we get: | A - λI | = 0, where I is the identity matrix of the same dimensions as A. "
 
     
     def dotProduct(self):
@@ -152,9 +173,9 @@ class Question:
         else:
             self.MatrixQuestion = [self.generateVector(3),self.generateVector(3)]
 
-        self.Answer = np.dot(self.MatrixQuestion[0].transpose(),self.MatrixQuestion[1])
+        self.Answer = np.round(np.dot(self.MatrixQuestion[0].transpose(),self.MatrixQuestion[1]),rounding)
         self.Question = "Find the dot product of the following two vecotrs"
-        self.SmallHint = "Your answer should be a scalar quantity (not a vector)"
+        self.SmallHint = "Your answer should be a scalar quantity (not a vector)."
         self.BigHint = "Multiply each element with the corresponding one in the other matrix and sum the products."
 
             
@@ -164,10 +185,10 @@ class Question:
         else:
             self.MatrixQuestion = [self.generateVector(3),self.generateVector(3)]
                 
-        self.Answer = np.cross(self.MatrixQuestion[0].transpose(),self.MatrixQuestion[1].transpose())       #not working
-        self.Question = "find the cross product of the following two vectors"
-        self.SmallHint = ""
-        self.BigHint = None
+        self.Answer = np.cross(self.MatrixQuestion[0].transpose(),self.MatrixQuestion[1].transpose())
+        self.Question = "find the cross product of the following two vectors. Leave your answer in vector form"
+        self.SmallHint = "The cross product of two parallel vectors is 0."
+        self.BigHint = "Your answer should be the vector perpendicular to the two question vectors"
         
 
     def matrixAddition(self):
@@ -180,16 +201,6 @@ class Question:
 
         self.Answer = np.add(self.MatrixQuestion[0],self.MatrixQuestion[1])
         self.Question = "Add the following to matrices"
-        self.SmallHint = "Add each element in the same poistion to get the new value in that position"
-        self.BigHint = None
+        self.SmallHint = "Add each element in the same poistion to get the new value in that position."
+        self.BigHint = "The first row of the answer is:" + str(self.Answer[0])
 
-    
-        
-"""    for testing purposes
-question1 = Question('m',6)
-print(question1.Question)
-print(question1.MatrixQuestion)
-print(question1.SmallHint)
-print(question1.BigHint)
-print(question1.Answer)
-"""
