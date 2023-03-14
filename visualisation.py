@@ -36,8 +36,8 @@ class MatrixCalculation(Scene):
         t3 = MathTex("This", "is", "the", "result","matrix")
         
         # matrices
-        mat = MathTex(r"\begin{bmatrix} "+str(matrix1[0][0])+" & \quad "+str(matrix1[0][1])+" \\\\ "+str(matrix1[1][0])+" & \quad "+str(matrix1[0][1])+" \end{bmatrix}")
-        mat2 = MathTex(r"+\begin{bmatrix} "+str(matrix2[0][0])+" & \quad "+str(matrix2[0][1])+" \\\\ "+str(matrix2[1][0])+" & \quad "+str(matrix2[0][1])+" \end{bmatrix}")
+        mat = MathTex(r"\begin{bmatrix} "+str(matrix1[0][0])+" & \quad "+str(matrix1[0][1])+" \\\\ "+str(matrix1[1][0])+" & \quad "+str(matrix1[1][1])+" \end{bmatrix}")
+        mat2 = MathTex(r"+\begin{bmatrix} "+str(matrix2[0][0])+" & \quad "+str(matrix2[0][1])+" \\\\ "+str(matrix2[1][0])+" & \quad "+str(matrix2[1][1])+" \end{bmatrix}")
         mat3 = MathTex(r"=\begin{bmatrix} "+str(rMatrix[0][0])+" & \quad "+str(rMatrix[0][1])+" \\\\ "+str(rMatrix[1][0])+" & \quad "+str(rMatrix[1][1])+" \end{bmatrix}")
         
         # mat3 = MathTex(r"=\quad 1\begin{bmatrix} -1 \\ 1 \end{bmatrix}\quad +\quad 2\begin{bmatrix} \quad 1 \\ -1 \end{bmatrix}")
