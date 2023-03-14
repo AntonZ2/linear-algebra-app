@@ -386,6 +386,10 @@ class LinearTransformation(LinearTransformationScene):
         
 
 class LinearTransformation3D(ThreeDScene):
+    
+    def __init__(self, matrix):
+        self.matrix = matrix
+        ThreeDScene.__init__(self)
 
     CONFIG = {
         "x_axis_label": "x",
@@ -405,11 +409,7 @@ class LinearTransformation3D(ThreeDScene):
 
     def construct(self):
 
-        M = np.array([
-            [2, 2, -1],
-            [-2, 1, 2],
-            [3, 1, -0]
-        ])
+        M = self.matrix
 
         axes = ThreeDAxes()
         axes.set_color(GRAY)
@@ -482,5 +482,5 @@ mat3 = np.array([[2,3,4],[3,4,1],[1,4,3]])
 mat4 = np.array([[1,0,0],[0,1,0],[0,0,1]])
 vec1 = np.array([1,1])
 # t = (mat3,mat4,"multiplication",3)
-t = LinearTransformation(mat1,vec1)
+t = LinearTransformation3D(mat3)
 t.render()
