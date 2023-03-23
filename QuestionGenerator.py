@@ -203,4 +203,3 @@ class Question:
         self.Question = "Add the following to matrices"
         self.SmallHint = "Add each element in the same poistion to get the new value in that position."
         self.BigHint = "The first row of the answer is:" + str(self.Answer[0])
-

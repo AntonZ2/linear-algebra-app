@@ -225,9 +225,9 @@ class MatrixCalculation(Scene):
         t3.move_to(3*UP)
         
         ''' addition '''
-        mat.move_to(4*LEFT)
-        mat2.move_to(0.5*LEFT)
-        mat3.move_to(3.5*RIGHT)
+        mat.move_to(5*LEFT)
+        mat2.move_to(1*LEFT)
+        mat3.move_to(4*RIGHT)
         
         
         # animations
@@ -476,11 +476,11 @@ class LinearTransformation3D(ThreeDScene):
 
             
         
-mat1 = np.array([[1,0],[1,1]])
+'''mat1 = np.array([[1,0],[1,1]])
 mat2 = np.array([[2,0],[0,2]])
-mat3 = np.array([[2,3,4],[3,4,1],[1,4,3]])
-mat4 = np.array([[1,0,0],[0,1,0],[0,0,1]])
+mat3 = np.array([[1,2,3],[4,5,6],[7,8,9]])
+mat4 = np.array([[10,11,12],[13,14,15],[16,17,18]])
 vec1 = np.array([1,1])
-# t = (mat3,mat4,"multiplication",3)
-t = LinearTransformation3D(mat3)
-t.render()
+t = MatrixCalculation(mat3,mat4,"multiplication",3)
+# t = LinearTransformation3D(mat3)
+t.render()'''
