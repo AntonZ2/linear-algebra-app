@@ -21,14 +21,12 @@ class Database:
         # Create the Questions table
         self.cursor.execute('''CREATE TABLE IF NOT EXISTS Questions
                     (questionID INTEGER PRIMARY KEY NOT NULL,
-                    UserID INTEGER,
                     QuestionType INTEGER NOT NULL,
                     QuestionDiff TEXT NOT NULL CHECK(QuestionDiff IN ('e', 'm', 'h')),
                     Points INTEGER NOT NULL,
                     Question TEXT,
                     SmallHint TEXT,
-                    BigHint TEXT,
-                    FOREIGN KEY (UserID) REFERENCES Users(userID));''')
+                    BigHint TEXT);''')
 
         # Create the Answers table
         self.cursor.execute('''CREATE TABLE IF NOT EXISTS Answers
@@ -71,7 +69,7 @@ class Database:
 
     # Method to ensure user disconnects from database when logged out
     def logout(self):
-        self.UserID = 0
+        self.UserID = "guest"
 
     # Method to login and search for user in database
     def find_user(self, username, password, usertype):
@@ -156,14 +154,13 @@ class Database:
     def upload_question(self, diff, type):
         q = Question(diff, type)
         answer = str(q.Answer.tolist())
-        print(answer)
         question = q.Question
         small_hint = q.SmallHint
         big_hint = q.BigHint
         points = q.points
 
-        statement = "INSERT INTO Questions(UserID, QuestionType, QuestionDiff, Points, Question, SmallHint, BigHint) VALUES(?, ?, ?, ?, ?, ?, ?);"
-        values = (self.UserID, type, diff, points, question, small_hint, big_hint)
+        statement = "INSERT INTO Questions(QuestionType, QuestionDiff, Points, Question, SmallHint, BigHint) VALUES(?, ?, ?, ?, ?, ?);"
+        values = (type, diff, points, question, small_hint, big_hint)
         self.cursor.execute(statement, values)
 
         questionID = self.cursor.lastrowid
@@ -209,32 +206,49 @@ class Database:
 
     def get_question(self, diff, type, num):
         statement = """
-        SELECT Questions.Question, Questions.BigHint, Questions.SmallHint, Questions.Points,
-            mv1.Matrix AS Matrix1, mv2.Matrix AS Matrix2, Answers.Answer
-        FROM Questions
-        LEFT JOIN UserQuestions ON Questions.QuestionID = UserQuestions.QuestionID AND UserQuestions.UserID = ?
-        LEFT JOIN Answers ON Questions.QuestionID = Answers.QuestionID
-        LEFT JOIN (SELECT * FROM MatricesVectors) AS mv1 ON Questions.QuestionID = mv1.QuestionID AND mv1.MatrixOrder = 1
-        LEFT JOIN (SELECT * FROM MatricesVectors) AS mv2 ON Questions.QuestionID = mv2.QuestionID AND mv2.MatrixOrder = 2
-        WHERE Questions.QuestionDiff=? AND Questions.QuestionType=? AND UserQuestions.UserID IS NULL
-        LIMIT ?;
-        """
-
+                SELECT Questions.QuestionID, Questions.Question, Questions.BigHint, Questions.SmallHint, Questions.Points,
+                    mv1.Matrix AS Matrix1, mv2.Matrix AS Matrix2, Answers.Answer
+                FROM Questions
+                LEFT JOIN UserQuestions ON Questions.QuestionID = UserQuestions.QuestionID AND UserQuestions.UserID = ?
+                LEFT JOIN Answers ON Questions.QuestionID = Answers.QuestionID
+                LEFT JOIN (SELECT * FROM MatricesVectors) AS mv1 ON Questions.QuestionID = mv1.QuestionID AND mv1.MatrixOrder = 1
+                LEFT JOIN (SELECT * FROM MatricesVectors) AS mv2 ON Questions.QuestionID = mv2.QuestionID AND mv2.MatrixOrder = 2
+                WHERE Questions.QuestionDiff=? AND Questions.QuestionType=? AND UserQuestions.UserID IS NULL
+                LIMIT ?;
+                """
 
         values = (self.UserID, diff, type, num)
         self.cursor.execute(statement, values)
         questions = self.cursor.fetchall()
-        print(questions)
 
         if len(questions) < num:
             for i in range(num - len(questions)):
                 self.upload_question(diff, type)
             return self.get_question(diff, type, num)
         else:
-            return questions
+            if self.UserID != 'guest':
+                question_ids = [question[0] for question in questions]
+                self.link_questions_to_user(self.UserID, question_ids)
+            
+            # Remove the QuestionID from the tuples
+            questions_without_id = [question[1:] for question in questions]
+            return questions_without_id
+    
+    def link_questions_to_user(self, user_id, question_ids):
+        statement = """
+        INSERT INTO UserQuestions (UserID, QuestionID, DateAnswered)
+        VALUES (?, ?, datetime('now'))
+        """
+
+        for question_id in question_ids:
+            self.cursor.execute(statement, (user_id, question_id))
+
+        self.conn.commit()
+
+
         
     def add_score(self, score):
-        if self.UserID is not 'guest':
+        if self.UserID != 'guest':
             statement = "UPDATE Users SET Score = Score + ? WHERE UserID = ?;"
             values = (score, self.UserID)
             self.cursor.execute(statement, values)

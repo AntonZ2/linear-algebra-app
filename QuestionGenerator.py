@@ -131,7 +131,7 @@ class Question:
 
         self.Answer = np.round(np.matmul((self.MatrixQuestion[0]),(self.MatrixQuestion[1])),rounding)
         self.Question = "Find the product of these two matrices"
-        self.SmallHint = "The element in the reuslt matrix is equal to the dot product of that element's row in the first matrix and the element's column in the second matrix."
+        self.SmallHint = "The element in the result matrix is equal to the dot product of that element's row in the first matrix and the element's column in the second matrix."
         self.BigHint = "To get you started the top left element is: " + str(self.MatrixQuestion[0][0]) + "which is the dot product of the first row in the first matrix, and the first column in the second matrix."
     
 

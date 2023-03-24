@@ -2,11 +2,10 @@ import numpy as np
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from tkmacosx import Button # Only for macOS users
+#from tkinter import Button # Windows Users use this comment previous
 import cv2
 
 from visualisation import MatrixCalculation, LinearEquation, LinearTransformation, LinearTransformation3D
-#                         #add mult           #systems         # 2d annn
-# for add and mult second parameter = addition or "multiplication", third is 2 or 3
 from database import Database
 
 
@@ -21,7 +20,6 @@ BODY_FONT2 = ("Verdana", 20)
 
 DB = Database()
 
-DB.upload_question("e", 0)
 
 class MatrixMate(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -320,11 +318,11 @@ class Visualize(tk.Frame):
             row = []
             row2 = []
             for j in range(size):
-                box = tk.Entry(self, width=2)
+                box = tk.Entry(self, width=3)
                 box.place(relx=constx+0.03*i, rely=consty+0.04*j, anchor="center")
                 row.append(box)
                 if self.type != 'vis':
-                    box2 = tk.Entry(self, width=2)
+                    box2 = tk.Entry(self, width=3)
                     box2.place(relx=constx2+0.03*i, rely=consty2+0.04*j, anchor="center")
                     row2.append(box2)
             self.entries.append(row)
@@ -384,11 +382,11 @@ class Visualize(tk.Frame):
         for i in range(2):
             row = []
             for j in range(2):
-                box = tk.Entry(self, width=2)
+                box = tk.Entry(self, width=3)
                 box.place(relx=0.445+0.03*i, rely=0.15+0.04*j, anchor="center")
                 row.append(box)
             self.entries.append(row)
-            box2 = tk.Entry(self, width=2)
+            box2 = tk.Entry(self, width=3)
             box2.place(relx=0.545, rely=0.15+0.04*i, anchor="center")
             self.vector.append(box2)
         self.trans_sign = tk.Label(self, text="by", font=SUBTITLE_FONT)
@@ -402,7 +400,7 @@ class Visualize(tk.Frame):
         for i in range(3):
             row = []
             for j in range(3):
-                box = tk.Entry(self, width=2)
+                box = tk.Entry(self, width=3)
                 box.place(relx=0.405+0.06*i, rely=0.15+0.04*j, anchor="center")
                 letter = tk.Label(self, text=letters[i], font=SUBTITLE_FONT)
                 letter.place(anchor="center", relx=0.425+0.06*i, rely=0.15+0.04*j)
@@ -418,7 +416,7 @@ class Visualize(tk.Frame):
             equal = tk.Label(self, text="=", font=SUBTITLE_FONT)
             equal.place(anchor="center", relx=0.57, rely=0.15+0.04*y)
             self.temp_widgets.append(equal)
-            box = tk.Entry(self, width=2)
+            box = tk.Entry(self, width=3)
             box.place(relx=0.6, rely=0.15+0.04*y, anchor="center")
             self.vector.append(box)
 
@@ -624,9 +622,11 @@ class Quiz(tk.Frame):
     def select_text_file(self):
         filename = filedialog.askopenfilename(initialdir = "/",title = "Select question file",filetypes = (("text files","*.txt"),))
         self.questions = []
+        q_type = ""
         for qType, question, bigHint, smallHint, matrix1, matrix2, answer in self.read_lines(filename):
             self.questions.append((question, bigHint, smallHint, 10, matrix1, matrix2, answer))
-        self.send_questions(qType)
+            q_type = qType
+        self.send_questions(q_type)
         
     
     def read_lines(self, filename):
@@ -711,7 +711,7 @@ class Questions(tk.Frame):
         self.big_hint_button.place(anchor="center", relx=0.9, rely=0.9, relwidth=0.15, relheight=0.08)
 
         self.menu_button = Button(self, text="Back To Menu", bg="#1f1f1f", fg="#ffaa00", activebackground="#212121", font=SUBTITLE_FONT,
-                                  command=lambda: [controller.show_frame(MainMenu), self.clear_screen(), self.reset_q()])
+                                  command=lambda: [controller.show_frame(MainMenu), self.clear_screen(), self.reset_q(), self.finish_button.lower()])
         self.menu_button.place(anchor="center", relx=0.91, rely=0.06, relwidth=0.15, relheight=0.08)
 
         self.finish_button = Button(self, text="Finish Quiz", bg="#1f1f1f", fg="#ffaa00", activebackground="#212121", font=BODY_FONT,
@@ -773,7 +773,6 @@ class Questions(tk.Frame):
         else:
             for i in range(len(self.entries)):
                 self.user_answers[self.current_question][i] = self.entries[i].get()
-        print(self.user_answers)
 
     
 
@@ -858,7 +857,7 @@ class Questions(tk.Frame):
             letter2.place(anchor="center", relx=0.47, rely=0.6+0.08*y)
             self.temp.append(letter2)
             self.temp.append(equalAns)
-            box = tk.Entry(self, width=2)
+            box = tk.Entry(self, width=3)
             box.insert(0, self.user_answers[self.current_question][y])                
             box.place(anchor="center", relx=0.53, rely=0.6+0.08*y)
             self.entries.append(box)
@@ -892,7 +891,7 @@ class Questions(tk.Frame):
                 letter2 = tk.Label(self, text=str(matrix2[j][i]), font=SUBTITLE_FONT)
                 letter2.place(relx=constx2+0.03*i, rely=consty+0.04*j, anchor="center")
                 self.temp.append(letter2)
-                box = tk.Entry(self, width=2)
+                box = tk.Entry(self, width=3)
                 box.insert(0, self.user_answers[self.current_question][j][i])                
                 box.place(relx=constx3+0.03*i, rely=consty+0.04*j, anchor="center")
                 row.append(box)
@@ -919,12 +918,12 @@ class Questions(tk.Frame):
             letter2.place(relx=constx2, rely=consty+0.04*i, anchor="center")
             self.temp.append(letter2)
             if self.type == "Cross Product":
-                box = tk.Entry(self, width=2)
+                box = tk.Entry(self, width=3)
                 box.insert(0, self.user_answers[self.current_question][i])                
                 box.place(relx=constx3, rely=consty+0.04*i, anchor="center")
                 self.entries.append(box)
         if self.type == "Dot Product":
-            box = tk.Entry(self, width=2)
+            box = tk.Entry(self, width=3)
             box.insert(0, self.user_answers[self.current_question])                
             box.place(relx=constx3, rely=0.5, anchor="center")
             self.entries.append(box)
@@ -976,25 +975,25 @@ class Questions(tk.Frame):
                 letter2.place(relx=constx+0.03*i, rely=consty+0.04*j, anchor="center")
                 self.temp.append(letter2)
                 if self.type == "Inverse Matrix":
-                    box = tk.Entry(self, width=2)
+                    box = tk.Entry(self, width=3)
                     box.insert(0, self.user_answers[self.current_question][j][i])                
                     box.place(relx=constx2+0.03*i, rely=consty+0.04*j, anchor="center")
                     row.append(box)
             if self.type == "Inverse Matrix":
                 self.entries.append(row)
             else:
-                box = tk.Entry(self, width=2)
+                box = tk.Entry(self, width=3)
                 box.insert(0, self.user_answers[self.current_question][i])                
                 box.place(relx=constx2+0.03*i, rely=consty2+0.005, anchor="center")
                 self.entries.append(box)
 
     def show_small_hint(self):
         messagebox.showinfo("Small Hint", self.q_small_hints[self.current_question])
-        self.q_points[self.current_question] /= 1.5
+        self.q_points[self.current_question] //= 1.5
 
     def show_big_hint(self):
         messagebox.showinfo("Big Hint", self.q_big_hints[self.current_question])
-        self.q_points[self.current_question] /= 2
+        self.q_points[self.current_question] //= 2
 
     def recieve_info(self, questions, type):
         self.type = type
@@ -1009,7 +1008,6 @@ class Questions(tk.Frame):
         self.user_answers.clear()
 
         self.questions = questions
-        print(self.questions)
         for i in self.questions:
             self.q_texts.append(i[0])
             self.q_big_hints.append(i[1])
@@ -1033,6 +1031,7 @@ class Questions(tk.Frame):
                 self.user_answers.append([""] * size)
         self.update_question()
         self.format_answers(size)
+        print(self.formatted_answers)
 
     def format_answers(self, size):
         self.formatted_answers = []
@@ -1053,21 +1052,22 @@ class Questions(tk.Frame):
     
     def calculate_score(self):
         total_points = 0
-        if self.type in ["System of Linear Equations", "Cross Product", "Dot Product", "Eigen Values"]:
+        if self.type in ["System of Linear Equations", "Cross Product", "Eigen Values"]:
             self.formatted_user_ans = [[float(num) if num != '' else -1000 for num in sublist] for sublist in self.user_answers]
+        elif self.type == "Dot Product":
+            self.formatted_user_ans = [float(num) if num != '' else -1000 for num in self.user_answers]
         else:
             self.formatted_user_ans = [[[float(num) if num != '' else -1000 for num in sublist2] for sublist2 in sublist]for sublist in self.user_answers]
 
         for i in range(len(self.formatted_answers)):
             if self.formatted_answers[i] == self.formatted_user_ans[i]:
                 total_points += self.q_points[i]
-        print(self.formatted_user_ans)
-        print(self.formatted_answers)
         return total_points
 
     
     def finish_quiz(self):
         self.store_inputs()
+        self.reset_q()
         total_points = self.calculate_score()
         finish_frame = self.controller.frames[Finish]
         finish_frame.display_results(self.formatted_answers, self.formatted_user_ans, total_points)
@@ -1084,13 +1084,14 @@ class Finish(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        self.menu_button = Button(self, text="Back To Menu", bg="#1f1f1f", fg="#ffaa00", activebackground="#212121", font=SUBTITLE_FONT,
-                                  command=lambda: [controller.show_frame(MainMenu)])
-        self.menu_button.place(anchor="center", relx=0.91, rely=0.06, relwidth=0.15, relheight=0.08)
 
     def display_results(self, answers, user_answers, points):
         for widget in self.winfo_children():
             widget.destroy()
+
+        self.menu_button = Button(self, text="Back To Menu", bg="#1f1f1f", fg="#ffaa00", activebackground="#212121", font=SUBTITLE_FONT,
+                                  command=lambda: [self.controller.show_frame(MainMenu)])
+        self.menu_button.place(anchor="center", relx=0.91, rely=0.06, relwidth=0.15, relheight=0.08)
 
         title = tk.Label(self, text="Quiz Complete", font=TITLE_FONT, fg="#ffaa00")
         title.place(anchor="center", relx=0.5, rely=0.1)
@@ -1104,11 +1105,7 @@ class Finish(tk.Frame):
             result = "Correct" if is_correct else f"Wrong (Correct Answer: {answers[i]})"
             result_color = "green" if is_correct else "red"
             result_label = tk.Label(self, text=f"{q_number} {result}", font=SUBTITLE_FONT, foreground=result_color)
-            result_label.place(anchor="w", relx=0.2, rely=0.4 + i * 0.05)
-
-
-
-
+            result_label.place(anchor="center", relx=0.5, rely=0.4 + i * 0.05)
 
 
 # program section to call the master class and start the program setting window size
